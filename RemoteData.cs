@@ -59,12 +59,12 @@ namespace api.pustalorc.xyz
                     var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
 
                     if (final == null)
-                        finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players, TotalMMR = teamMMR, AverageMMR = teamMMR / players.Count });
+                        finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players, TotalMMR = teamMMR, AverageMMR = teamMMR / players.Count(k => k.MMR > 0) });
                     else
                     {
                         final.Members = players;
                         final.TotalMMR = teamMMR;
-                        final.AverageMMR = teamMMR / players.Count;
+                        final.AverageMMR = teamMMR / players.Count(k => k.MMR > 0);
                     }
                 }
             }
