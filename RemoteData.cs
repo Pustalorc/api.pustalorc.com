@@ -14,6 +14,7 @@ namespace api.pustalorc.xyz
 
         public static void RetrieveGroups()
         {
+            var finalTeams = new List<SimpleTeam>();
             using (var web = new WebClient())
             {
                 var teams = new List<Team>();
@@ -53,11 +54,11 @@ namespace api.pustalorc.xyz
                         }
                     }
 
-                    _simpleTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players });
+                    finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players });
                 }
             }
 
-            _simpleTeams = _simpleTeams.OrderBy(k => k.Name).ToList();
+            _simpleTeams = finalTeams.OrderBy(k => k.Name).ToList();
         }
     }
 }
