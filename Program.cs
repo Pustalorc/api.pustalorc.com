@@ -1,14 +1,30 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Threading;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace api.pustalorc.xyz
 {
     public class Program
     {
+        private static Timer RemoteDataUpdate;
+
         public static void Main(string[] args)
         {
+            ThreadPool.QueueUserWorkItem(l => { RemoteData.RetrieveGroups(); });
+            RemoteDataUpdate = new Timer(1800000);
+            RemoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
+            RemoteDataUpdate.Start();
+
             CreateHostBuilder(args).Build().Run();
+        }
+
+        private static void RemoteDataUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            RemoteData.RetrieveGroups();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
