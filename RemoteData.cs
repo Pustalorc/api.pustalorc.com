@@ -1,10 +1,8 @@
 ﻿using api.pustalorc.xyz.JSON_Classes;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace api.pustalorc.xyz
 {
@@ -29,6 +27,8 @@ namespace api.pustalorc.xyz
                 foreach (var team in teams)
                 {
                     var players = new List<SimplePlayer>();
+                    var teamMMR = 0;
+
                     foreach (var player in team.members.ToList()
                         .ConvertAll(k => k.inGameName?.displayName ?? k.userId))
                     {
@@ -47,14 +47,25 @@ namespace api.pustalorc.xyz
                                     $"https://ubisoft-avatars.akamaized.net/{data.p_user}/default_146_146.png",
                                 MMR = data.p_currentmmr
                             });
+                            teamMMR += data.p_currentmmr;
                         }
                         else
                         {
                             players.Add(new SimplePlayer { Name = player, Rank = "", ProfilePicture = "", MMR = 0 });
+                            teamMMR += 0;
                         }
                     }
 
-                    finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players });
+                    var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
+
+                    if (final == null)
+                        finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players, TotalMMR = teamMMR, AverageMMR = teamMMR / players.Count });
+                    else
+                    {
+                        final.Members = players;
+                        final.TotalMMR = teamMMR;
+                        final.AverageMMR = teamMMR / players.Count;
+                    }
                 }
             }
 
