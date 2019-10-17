@@ -6,9 +6,9 @@ using System.Net;
 
 namespace api.pustalorc.xyz
 {
-    public static class RemoteData
+    public static class RainbowSixTeams
     {
-        public static List<SimpleTeam> _simpleTeams = new List<SimpleTeam>();
+        public static List<SimpleTeam> Teams = new List<SimpleTeam>();
 
         public static void RetrieveGroups()
         {
@@ -20,8 +20,10 @@ namespace api.pustalorc.xyz
                 foreach (var team in JsonConvert
                     .DeserializeObject<NuelTournament>(web.DownloadString(
                         "https://tournament-cms.dev.thenuel.com/rainbow-six-siege-university-league-winter-2019"))
-                    .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id => JsonConvert.DeserializeObject<Tournament>(
-                        web.DownloadString($"https://teams.dev.thenuel.com/signup-pools/{id}"))).Where(team => team.teams.Any()))
+                    .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id =>
+                        JsonConvert.DeserializeObject<Tournament>(
+                            web.DownloadString($"https://teams.dev.thenuel.com/signup-pools/{id}")))
+                    .Where(team => team.teams.Any()))
                     teams.AddRange(team.teams.Where(k => k.members.Length >= 5).ToArray());
 
                 foreach (var team in teams)
@@ -41,35 +43,39 @@ namespace api.pustalorc.xyz
                             players.Add(new SimplePlayer
                             {
                                 Name = player,
-                                Rank =
-                                    $"https://trackercdn.com/cdn/r6.tracker.network/ranks/svg/hd-rank{data.p_currentrank}.svg",
-                                ProfilePicture =
-                                    $"https://ubisoft-avatars.akamaized.net/{data.p_user}/default_146_146.png",
+                                Rank = data.p_currentrank,
+                                PlayerID = data.p_user,
                                 MMR = data.p_currentmmr
                             });
                             teamMMR += data.p_currentmmr;
                         }
                         else
                         {
-                            players.Add(new SimplePlayer { Name = player, Rank = "", ProfilePicture = "", MMR = 0 });
+                            players.Add(new SimplePlayer {Name = player, Rank = 0, PlayerID = "", MMR = 0});
                             teamMMR += 0;
                         }
                     }
 
                     var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
+                    var playersWithMMR = players.Count(k => k.MMR > 0);
 
                     if (final == null)
-                        finalTeams.Add(new SimpleTeam { Id = team.id, Name = team.name, Members = players, TotalMMR = teamMMR, AverageMMR = teamMMR / players.Count(k => k.MMR > 0) });
+                    {
+                        finalTeams.Add(new SimpleTeam
+                        {
+                            Id = team.id, Name = team.name, Members = players,
+                            AverageMMR = playersWithMMR <= 0 ? 0 : teamMMR / playersWithMMR
+                        });
+                    }
                     else
                     {
                         final.Members = players;
-                        final.TotalMMR = teamMMR;
-                        final.AverageMMR = teamMMR / players.Count(k => k.MMR > 0);
+                        final.AverageMMR = playersWithMMR <= 0 ? 0 : teamMMR / playersWithMMR;
                     }
                 }
             }
 
-            _simpleTeams = finalTeams.OrderBy(k => k.Name).ToList();
+            Teams = finalTeams.OrderBy(k => k.Name).ToList();
         }
     }
 }
