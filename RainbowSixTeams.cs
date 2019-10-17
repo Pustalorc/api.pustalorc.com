@@ -31,33 +31,38 @@ namespace api.pustalorc.xyz
                     var players = new List<SimplePlayer>();
                     var teamMMR = 0;
 
-                    foreach (var player in team.members.ToList()
-                        .ConvertAll(k => k.inGameName?.displayName ?? k.userId))
+                    foreach (var player in team.members.ToList())
                     {
-                        var playerData = JsonConvert.DeserializeObject<PlayerData>(
-                            web.DownloadString($"https://r6tab.com/api/search.php?platform=uplay&search={player}"));
-
-                        if ((playerData?.results?.Length ?? 0) > 0)
+                        if (player.inGameName?.displayName == null)
                         {
-                            var data = playerData.results[0];
-                            players.Add(new SimplePlayer
-                            {
-                                Name = player,
-                                Rank = data.p_currentrank,
-                                PlayerID = data.p_user,
-                                MMR = data.p_currentmmr
-                            });
-                            teamMMR += data.p_currentmmr;
+                            players.Add(new SimplePlayer { Name = player.userId, Rank = 0, PlayerID = "", MMR = 0, IsCaptain = player.userId == team.captainUserId });
                         }
                         else
                         {
-                            players.Add(new SimplePlayer {Name = player, Rank = 0, PlayerID = "", MMR = 0});
-                            teamMMR += 0;
+                            var playerData = JsonConvert.DeserializeObject<PlayerData>(
+                                web.DownloadString($"https://r6tab.com/api/search.php?platform=uplay&search={player.inGameName.displayName}"));
+
+                            if ((playerData?.results?.Length ?? 0) > 0)
+                            {
+                                var data = playerData.results[0];
+                                players.Add(new SimplePlayer
+                                {
+                                    Name = player.inGameName?.displayName ?? player.userId,
+                                    Rank = data.p_currentrank,
+                                    PlayerID = data.p_user,
+                                    MMR = data.p_currentmmr,
+                                    IsCaptain = player.userId == team.captainUserId
+                                });
+                                teamMMR += data.p_currentmmr;
+                            }
+                            else
+                                players.Add(new SimplePlayer { Name = player.inGameName?.displayName ?? player.userId, Rank = 0, PlayerID = "", MMR = 0, IsCaptain = player.userId == team.captainUserId });
                         }
                     }
 
                     var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
                     var playersWithMMR = players.Count(k => k.MMR > 0);
+                    players.OrderBy(k => k.IsCaptain);
 
                     if (final == null)
                     {
