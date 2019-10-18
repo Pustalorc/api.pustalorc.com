@@ -18,13 +18,13 @@ namespace api.pustalorc.xyz.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<SimpleTeam> Get()
+        public IEnumerable<RainbowSixTeam> Get()
         {
             return RainbowSixTeams.Teams.ToArray();
         }
 
         [HttpGet("{team}")]
-        public SimpleTeam GetTeam(string team)
+        public RainbowSixTeam GetTeam(string team)
         {
             return RainbowSixTeams.Teams.FirstOrDefault(k => k.Id == team);
         }

@@ -13,9 +13,9 @@ namespace api.pustalorc.xyz
 
         public static void Main(string[] args)
         {
-            ThreadPool.QueueUserWorkItem(l => { RainbowSixTeams.RetrieveGroups(); });
+            ThreadPool.QueueUserWorkItem(l => { RemoteDataUpdate_Elapsed(null, null); });
 
-            RemoteDataUpdate = new Timer(1800000);
+            RemoteDataUpdate = new Timer(14400000);
             RemoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
             RemoteDataUpdate.Start();
 
@@ -25,6 +25,7 @@ namespace api.pustalorc.xyz
         private static void RemoteDataUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
             RainbowSixTeams.RetrieveGroups();
+            LeagueOfLegendsTeams.RetrieveGroups();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
