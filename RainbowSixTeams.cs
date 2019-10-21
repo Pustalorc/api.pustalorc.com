@@ -14,17 +14,18 @@ namespace api.pustalorc.xyz
 
         public static void RetrieveGroups()
         {
+            var configuration = APIConfiguration.Load();
             var finalTeams = new List<RainbowSixTeam>();
+
             using (var web = new WebClient())
             {
                 var teams = new List<Team>();
 
                 foreach (var team in JsonConvert
-                    .DeserializeObject<NuelTournament>(web.DownloadString(
-                        "https://tournament-cms.dev.thenuel.com/rainbow-six-siege-university-league-winter-2019"))
+                    .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentAPI + configuration.R6STournamentName))
                     .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id =>
                         JsonConvert.DeserializeObject<Tournament>(
-                            web.DownloadString($"https://teams.dev.thenuel.com/signup-pools/{id}")))
+                            web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
                     .Where(team => team.teams.Any()))
                     teams.AddRange(team.teams.Where(k => k.eligibility.isEligible).ToArray());
 

@@ -16,7 +16,7 @@ namespace api.pustalorc.xyz
 
         public static void RetrieveGroups()
         {
-            var apikey = APIKeyConfiguration.Load();
+            var configuration = APIConfiguration.Load();
             var finalTeams = new List<LeagueOfLegendsTeam>();
 
             using (var web = new WebClient())
@@ -24,11 +24,10 @@ namespace api.pustalorc.xyz
                 var teams = new List<Team>();
 
                 foreach (var team in JsonConvert
-                    .DeserializeObject<NuelTournament>(web.DownloadString(
-                        "https://tournament-cms.dev.thenuel.com/league-of-legends-university-series-winter-2019"))
+                    .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentAPI + configuration.LolTournamentName))
                     .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id =>
                         JsonConvert.DeserializeObject<Tournament>(
-                            web.DownloadString($"https://teams.dev.thenuel.com/signup-pools/{id}")))
+                            web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
                     .Where(team => team.teams.Any()))
                     teams.AddRange(team.teams.Where(k => k.eligibility.isEligible).ToArray());
 
@@ -44,10 +43,10 @@ namespace api.pustalorc.xyz
                             try
                             {
                                 var data = web.DownloadString(
-                                    $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.inGameName.displayName}?api_key={apikey.LoLApiKey}");
+                                    $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.inGameName.displayName}?api_key={configuration.LoLApiKey}");
                                 var summonerDetails = JsonConvert.DeserializeObject<Summoner>(data);
                                 var data2 = web.DownloadString(
-                                    $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.id}?api_key={apikey.LoLApiKey}");
+                                    $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.id}?api_key={configuration.LoLApiKey}");
                                 var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
                                 Thread.Sleep(2500);
 
