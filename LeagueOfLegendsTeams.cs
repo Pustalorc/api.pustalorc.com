@@ -25,7 +25,7 @@ namespace api.pustalorc.xyz
 
                 foreach (var team in JsonConvert
                     .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentAPI + configuration.LolTournamentName))
-                    .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id =>
+                    .schedule.Where(k => k.isPlayableWeek && System.DateTime.UtcNow < System.DateTime.Parse(k.date)).ToList().ConvertAll(k => k.tournamentId).Select(id =>
                         JsonConvert.DeserializeObject<Tournament>(
                             web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
                     .Where(team => team.teams.Any()))

@@ -23,7 +23,7 @@ namespace api.pustalorc.xyz
 
                 foreach (var team in JsonConvert
                     .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentAPI + configuration.R6STournamentName))
-                    .schedule.ToList().ConvertAll(k => k.tournamentId).Select(id =>
+                    .schedule.Where(k => k.isPlayableWeek && System.DateTime.UtcNow < System.DateTime.Parse(k.date)).ToList().ConvertAll(k => k.tournamentId).Select(id =>
                         JsonConvert.DeserializeObject<Tournament>(
                             web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
                     .Where(team => team.teams.Any()))
@@ -45,9 +45,19 @@ namespace api.pustalorc.xyz
                         }
                         else
                         {
-                            var playerData = JsonConvert.DeserializeObject<PlayerData>(
-                                web.DownloadString(
-                                    $"https://r6tab.com/api/search.php?platform=uplay&search={player.inGameName.displayName}"));
+                            var downloadStr = "{\"totalresults\":0}";
+                            try
+                            {
+                                downloadStr = web.DownloadString($"https://r6tab.com/api/search.php?platform=uplay&search={player.inGameName.displayName}");
+                            }
+                            catch (WebException ex)
+                            {
+                                if (ex.Status != WebExceptionStatus.Timeout)
+                                {
+                                    throw ex;
+                                }
+                            }
+                            var playerData = JsonConvert.DeserializeObject<PlayerData>(downloadStr);
 
                             if ((playerData?.results?.Length ?? 0) > 0)
                             {
