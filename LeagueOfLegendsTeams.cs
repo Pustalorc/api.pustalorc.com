@@ -29,7 +29,7 @@ namespace api.pustalorc.xyz
                         JsonConvert.DeserializeObject<Tournament>(
                             web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
                     .Where(team => team.teams.Any()))
-                    teams.AddRange(team.teams.Where(k => k.eligibility.isEligible).ToArray());
+                    teams.AddRange(team.teams);
 
                 foreach (var team in teams)
                 {
