@@ -9,15 +9,15 @@ namespace api.pustalorc.xyz
 {
     public class Program
     {
-        private static Timer RemoteDataUpdate;
+        private static Timer _remoteDataUpdate;
 
         public static void Main(string[] args)
         {
-            ThreadPool.QueueUserWorkItem(l => { RemoteDataUpdate_Elapsed(null, null); });
+            ThreadPool.QueueUserWorkItem(l => RemoteDataUpdate_Elapsed(null, null));
 
-            RemoteDataUpdate = new Timer(14400000);
-            RemoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
-            RemoteDataUpdate.Start();
+            _remoteDataUpdate = new Timer(14400000);
+            _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
+            _remoteDataUpdate.Start();
 
             CreateHostBuilder(args).Build().Run();
         }

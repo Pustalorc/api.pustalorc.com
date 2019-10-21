@@ -14,7 +14,7 @@ namespace api.pustalorc.xyz
 
         public static void RetrieveGroups()
         {
-            var configuration = APIConfiguration.Load();
+            var configuration = ApiConfiguration.Load();
             var finalTeams = new List<RainbowSixTeam>();
 
             using (var web = new WebClient())
@@ -22,26 +22,27 @@ namespace api.pustalorc.xyz
                 var teams = new List<Team>();
 
                 foreach (var team in JsonConvert
-                    .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentAPI + configuration.R6STournamentName))
+                    .DeserializeObject<NuelTournament>(web.DownloadString(configuration.NuelTournamentApi + configuration.R6STournamentName))
                     .schedule.Where(k => k.isPlayableWeek && System.DateTime.UtcNow < System.DateTime.Parse(k.date)).ToList().ConvertAll(k => k.tournamentId).Select(id =>
                         JsonConvert.DeserializeObject<Tournament>(
-                            web.DownloadString(configuration.NuelSignupPoolsAPI + id)))
+                            web.DownloadString(configuration.NuelSignupPoolsApi + id)))
                     .Where(team => team.teams.Any()))
                     teams.AddRange(team.teams);
 
                 foreach (var team in teams)
                 {
                     var players = new List<RainbowSixPlayer>();
-                    var teamMMR = 0;
+                    var teamMmr = 0;
 
                     foreach (var player in team.members.ToList())
                         if (player.inGameName?.displayName == null)
                         {
                             players.Add(new RainbowSixPlayer
                             {
-                                Name = player.userId, Rank = 0, PlayerID = "", MMR = 0,
+                                Name = player.userId, Rank = 0, PlayerId = "", Mmr = 0,
                                 IsCaptain = player.userId == team.captainUserId
                             });
+                            teamMmr += 2000;
                         }
                         else
                         {
@@ -52,11 +53,9 @@ namespace api.pustalorc.xyz
                             }
                             catch (WebException ex)
                             {
-                                if (ex.Status != WebExceptionStatus.Timeout)
-                                {
-                                    throw ex;
-                                }
+                                if (ex.Status != WebExceptionStatus.Timeout) throw;
                             }
+
                             var playerData = JsonConvert.DeserializeObject<PlayerData>(downloadStr);
 
                             if ((playerData?.results?.Length ?? 0) > 0)
@@ -66,38 +65,38 @@ namespace api.pustalorc.xyz
                                 {
                                     Name = player.inGameName.displayName,
                                     Rank = data.p_currentrank,
-                                    PlayerID = data.p_user,
-                                    MMR = data.p_currentmmr,
+                                    PlayerId = data.p_user,
+                                    Mmr = data.p_currentmmr,
                                     IsCaptain = player.userId == team.captainUserId
                                 });
-                                teamMMR += data.p_currentmmr;
+                                teamMmr += data.p_currentmmr == 0 ? 2000 : data.p_currentmmr;
                             }
                             else
                             {
                                 players.Add(new RainbowSixPlayer
                                 {
-                                    Name = player.inGameName.displayName, Rank = 0, PlayerID = "", MMR = 0,
+                                    Name = player.inGameName.displayName, Rank = 0, PlayerId = "", Mmr = 0,
                                     IsCaptain = player.userId == team.captainUserId
                                 });
+                                teamMmr += 2000;
                             }
                         }
 
                     var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
-                    var playersWithMMR = players.Count(k => k.MMR > 0);
-                    players.OrderBy(k => k.Name);
+                    players = players.OrderBy(k => k.Name).ToList();
 
                     if (final == null)
                     {
                         finalTeams.Add(new RainbowSixTeam
                         {
                             Id = team.id, Name = team.name, Members = players,
-                            AverageMMR = playersWithMMR <= 0 ? 0 : teamMMR / playersWithMMR
+                            AverageMmr = teamMmr / players.Count
                         });
                     }
                     else
                     {
                         final.Members = players;
-                        final.AverageMMR = playersWithMMR <= 0 ? 0 : teamMMR / playersWithMMR;
+                        final.AverageMmr = teamMmr / players.Count;
                     }
                 }
             }
