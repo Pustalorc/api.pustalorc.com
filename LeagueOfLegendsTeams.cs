@@ -85,6 +85,10 @@ namespace api.pustalorc.xyz
                                     players.Add(new LeagueOfLegendsPlayer
                                     {
                                         Name = player.inGameName.displayName,
+                                        TftRank = "bronze_1",
+                                        Rank = "bronze_1",
+                                        PlayerId = summonerDetails.id,
+                                        ProfileIconId = int.TryParse(profileIcons.data.GetType().GetProperty("_" + summonerDetails.profileIconId)?.Name?.Substring(1) ?? "0", out var id) ? id : 0,
                                         IsCaptain = player.userId == team.captainUserId
                                     });
                                     teamRank += 5;
