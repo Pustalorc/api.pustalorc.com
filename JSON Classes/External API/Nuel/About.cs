@@ -2,7 +2,7 @@
 {
     public class About
     {
-        public Data data { get; set; }
+        public UriData data { get; set; }
         public Content[] content { get; set; }
         public string nodeType { get; set; }
     }

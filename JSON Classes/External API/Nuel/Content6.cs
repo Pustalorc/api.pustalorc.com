@@ -2,8 +2,8 @@
 {
     public class Content6
     {
-        public Data9 data { get; set; }
-        public object[] marks { get; set; }
+        public UriData data { get; set; }
+        public Mark[] marks { get; set; }
         public string value { get; set; }
         public string nodeType { get; set; }
         public Content7[] content { get; set; }

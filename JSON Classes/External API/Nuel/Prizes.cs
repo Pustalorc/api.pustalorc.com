@@ -2,8 +2,8 @@
 {
     public class Prizes
     {
-        public Data3 data { get; set; }
-        public Content2[] content { get; set; }
+        public object data { get; set; }
+        public Content[] content { get; set; }
         public string nodeType { get; set; }
     }
 }
