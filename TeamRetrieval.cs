@@ -52,7 +52,7 @@ namespace api.pustalorc.xyz
                 foreach (var tourney in config.Tournaments.Where(k => k.TournamentType == ETournamentType.Rainbow6))
                 {
                     var teams = GetNuelTeams(config.NuelTournamentApi, config.NuelSignupPoolsApi,
-                        tourney.TournamentName).Take(5).ToList();
+                        tourney.TournamentName);
 
                     foreach (var team in teams)
                     {
@@ -155,7 +155,7 @@ namespace api.pustalorc.xyz
                 )
                 {
                     var teams = GetNuelTeams(configuration.NuelTournamentApi, configuration.NuelSignupPoolsApi,
-                        tourney.TournamentName).Take(5).ToList();
+                        tourney.TournamentName);
                     foreach (var team in teams)
                     {
                         var players = new List<LeagueOfLegendsPlayer>();
