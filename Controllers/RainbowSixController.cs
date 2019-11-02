@@ -2,31 +2,23 @@
 using System.Linq;
 using api.pustalorc.xyz.JSON_Classes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace api.pustalorc.xyz.Controllers
 {
     [ApiController]
-    [Route("nuelteams/[controller]")]
-    public class RainbowSixController : ControllerBase
+    [Route("NuelTeams/[controller]")]
+    public class RainbowSixController : Controller
     {
-        private readonly ILogger<RainbowSixController> _logger;
-
-        public RainbowSixController(ILogger<RainbowSixController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpGet]
         public IEnumerable<RainbowSixTeam> Get()
         {
-            return RainbowSixTeams.Teams.ToArray();
+            return TeamRetrieval.RainbowTeams.ToArray();
         }
 
         [HttpGet("{team}")]
         public RainbowSixTeam GetTeam(string team)
         {
-            return RainbowSixTeams.Teams.FirstOrDefault(k => k.Id == team);
+            return TeamRetrieval.RainbowTeams.FirstOrDefault(k => k.Id == team);
         }
     }
 }

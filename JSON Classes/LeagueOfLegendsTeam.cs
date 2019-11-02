@@ -4,6 +4,7 @@ namespace api.pustalorc.xyz.JSON_Classes
 {
     public class LeagueOfLegendsTeam
     {
+        public string TournamentName { get; set; } = "";
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
         public string AverageRank { get; set; } = "";

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -15,17 +16,25 @@ namespace api.pustalorc.xyz
         {
             ThreadPool.QueueUserWorkItem(l => RemoteDataUpdate_Elapsed(null, null));
 
-            _remoteDataUpdate = new Timer(14400000);
-            _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
-            _remoteDataUpdate.Start();
-
             CreateHostBuilder(args).Build().Run();
         }
 
         private static void RemoteDataUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
-            RainbowSixTeams.RetrieveGroups();
-            LeagueOfLegendsTeams.RetrieveGroups();
+            var start = DateTime.Now;
+            TeamRetrieval.GetTeams();
+            var end = DateTime.Now;
+
+            if (_remoteDataUpdate == null)
+            {
+                _remoteDataUpdate = new Timer(end.Subtract(start).TotalMilliseconds + 1800000);
+                _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
+                _remoteDataUpdate.Start();
+            }
+
+            _remoteDataUpdate.Stop();
+            _remoteDataUpdate = new Timer(end.Subtract(start).TotalMilliseconds + 1800000);
+            _remoteDataUpdate.Start();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

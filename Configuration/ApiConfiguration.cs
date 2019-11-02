@@ -1,18 +1,19 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 
-namespace api.pustalorc.xyz
+namespace api.pustalorc.xyz.Configuration
 {
     public class ApiConfiguration
     {
         [JsonIgnore] public static string FileName { get; } = "Config/configuration.json";
 
         public string LoLApiKey { get; set; } = Guid.Empty.ToString();
-        public string LolTournamentName { get; set; } = "league-of-legends-university-series-winter-2019";
-        public string R6STournamentName { get; set; } = "rainbow-six-siege-university-league-winter-2019";
         public string NuelTournamentApi { get; set; } = "https://tournament-cms.dev.thenuel.com/";
         public string NuelSignupPoolsApi { get; set; } = "https://teams.dev.thenuel.com/signup-pools/";
+
+        public List<Tournament> Tournaments { get; set; } = new List<Tournament>();
 
         public void SaveJson()
         {

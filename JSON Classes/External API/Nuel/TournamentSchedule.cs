@@ -1,6 +1,6 @@
 ﻿namespace api.pustalorc.xyz.JSON_Classes.External_API.Nuel
 {
-    public class Tournament
+    public class TournamentSchedule
     {
         public string name { get; set; }
         public Criteria criteria { get; set; }
