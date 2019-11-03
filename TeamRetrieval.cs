@@ -136,7 +136,7 @@ namespace api.pustalorc.xyz
                 }
             }
 
-            RainbowTeams.OrderBy(k => k.Name).ToList();
+            RainbowTeams = RainbowTeams.OrderBy(k => k.Name).ToList();
         }
 
 
@@ -277,7 +277,7 @@ namespace api.pustalorc.xyz
                 }
             }
 
-            LeagueTeams.OrderBy(k => k.Name).ToList();
+            LeagueTeams = LeagueTeams.OrderBy(k => k.Name).ToList();
         }
     }
 }
