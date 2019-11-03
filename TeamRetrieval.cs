@@ -173,6 +173,7 @@ namespace api.pustalorc.xyz
                             }
                             else
                             {
+                            retry:
                                 try
                                 {
                                     var data = web.DownloadString(
@@ -242,6 +243,8 @@ namespace api.pustalorc.xyz
                                     if (ex.Status != WebExceptionStatus.ProtocolError || ex.Response == null) throw;
 
                                     var resp = (HttpWebResponse) ex.Response;
+                                    if (resp.StatusCode == HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.InternalServerError)
+                                        goto retry;
                                     if (resp.StatusCode != HttpStatusCode.NotFound) throw;
 
                                     players.Add(new LeagueOfLegendsPlayer
