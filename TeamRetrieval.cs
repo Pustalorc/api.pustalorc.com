@@ -243,7 +243,7 @@ namespace api.pustalorc.xyz
                                     if (ex.Status != WebExceptionStatus.ProtocolError || ex.Response == null) throw;
 
                                     var resp = (HttpWebResponse) ex.Response;
-                                    if (resp.StatusCode == HttpStatusCode.InternalServerError || resp.StatusCode == HttpStatusCode.InternalServerError)
+                                    if (resp.StatusCode == HttpStatusCode.ServiceUnavailable || resp.StatusCode == HttpStatusCode.InternalServerError)
                                         goto retry;
                                     if (resp.StatusCode != HttpStatusCode.NotFound) throw;
 
