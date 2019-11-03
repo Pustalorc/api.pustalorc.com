@@ -19,8 +19,8 @@ namespace api.pustalorc.xyz
 
         public static void GetTeams()
         {
-            RainbowTeams = GetRainbowTeams();
-            LeagueTeams = GetLeagueTeams();
+            GetRainbowTeams();
+            GetLeagueTeams();
         }
 
         public static IEnumerable<Team> GetNuelTeams(string nuelTapi, string nuelSapi, string tournamentName)
@@ -42,10 +42,9 @@ namespace api.pustalorc.xyz
             return teams;
         }
 
-        public static List<RainbowSixTeam> GetRainbowTeams()
+        public static void GetRainbowTeams()
         {
             var config = ApiConfiguration.Load();
-            var finalTeams = new List<RainbowSixTeam>();
 
             using (var web = new WebClient())
             {
@@ -114,12 +113,12 @@ namespace api.pustalorc.xyz
                                 }
                             }
 
-                        var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
+                        var final = RainbowTeams.FirstOrDefault(k => k.Id.Equals(team.id));
                         players = players.OrderBy(k => k.Name).ToList();
 
                         if (final == null)
                         {
-                            finalTeams.Add(new RainbowSixTeam
+                            RainbowTeams.Add(new RainbowSixTeam
                             {
                                 TournamentName = tourney.TournamentName,
                                 Id = team.id,
@@ -137,14 +136,13 @@ namespace api.pustalorc.xyz
                 }
             }
 
-            return finalTeams.OrderBy(k => k.Name).ToList();
+            RainbowTeams.OrderBy(k => k.Name).ToList();
         }
 
 
-        public static List<LeagueOfLegendsTeam> GetLeagueTeams()
+        public static void GetLeagueTeams()
         {
             var configuration = ApiConfiguration.Load();
-            var finalTeams = new List<LeagueOfLegendsTeam>();
 
             using (var web = new WebClient())
             {
@@ -256,12 +254,12 @@ namespace api.pustalorc.xyz
                                 }
                             }
 
-                        var final = finalTeams.FirstOrDefault(k => k.Id.Equals(team.id));
+                        var final = LeagueTeams.FirstOrDefault(k => k.Id.Equals(team.id));
                         players = players.OrderBy(k => k.Name).ToList();
 
                         if (final == null)
                         {
-                            finalTeams.Add(new LeagueOfLegendsTeam
+                            LeagueTeams.Add(new LeagueOfLegendsTeam
                             {
                                 TournamentName = tourney.TournamentName,
                                 Id = team.id,
@@ -279,7 +277,7 @@ namespace api.pustalorc.xyz
                 }
             }
 
-            return finalTeams.OrderBy(k => k.Name).ToList();
+            LeagueTeams.OrderBy(k => k.Name).ToList();
         }
     }
 }
