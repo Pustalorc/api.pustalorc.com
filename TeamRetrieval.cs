@@ -50,6 +50,7 @@ namespace api.pustalorc.xyz
             {
                 foreach (var tourney in config.Tournaments.Where(k => k.TournamentType == ETournamentType.Rainbow6))
                 {
+                    RainbowTeams.RemoveAll(k => k.TournamentName.Equals(tourney.TournamentName, StringComparison.InvariantCultureIgnoreCase));
                     var teams = GetNuelTeams(config.NuelTournamentApi, config.NuelSignupPoolsApi,
                         tourney.TournamentName);
 
@@ -149,9 +150,9 @@ namespace api.pustalorc.xyz
                 var profileIcons = JsonConvert.DeserializeObject<ProfileIcons>(
                     web.DownloadString("http://ddragon.leagueoflegends.com/cdn/9.20.1/data/en_US/profileicon.json"));
 
-                foreach (var tourney in configuration.Tournaments.Where(k => k.TournamentType == ETournamentType.League)
-                )
+                foreach (var tourney in configuration.Tournaments.Where(k => k.TournamentType == ETournamentType.League))
                 {
+                    LeagueTeams.RemoveAll(k => k.TournamentName.Equals(tourney.TournamentName, StringComparison.InvariantCultureIgnoreCase));
                     var teams = GetNuelTeams(configuration.NuelTournamentApi, configuration.NuelSignupPoolsApi,
                         tourney.TournamentName);
                     foreach (var team in teams)
