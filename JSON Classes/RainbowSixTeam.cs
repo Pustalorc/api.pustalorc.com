@@ -2,12 +2,10 @@
 
 namespace api.pustalorc.xyz.JSON_Classes
 {
-    public class RainbowSixTeam
+    public class RainbowSixTeam : TournamentTeam
     {
-        public string TournamentName { get; set; } = "";
-        public string Id { get; set; } = "";
-        public string Name { get; set; } = "";
         public int AverageMmr { get; set; } = 0;
-        public List<RainbowSixPlayer> Members { get; set; } = new List<RainbowSixPlayer>();
+
+        public List<RainbowSixPlayer> Players { get => Members.ConvertAll(k => k as RainbowSixPlayer); set => Members = value.ConvertAll(k => k as TeamPlayer); }
     }
 }

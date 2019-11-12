@@ -2,12 +2,9 @@
 
 namespace api.pustalorc.xyz.JSON_Classes
 {
-    public class LeagueOfLegendsTeam
+    public class LeagueOfLegendsTeam : TournamentTeam
     {
-        public string TournamentName { get; set; } = "";
-        public string Id { get; set; } = "";
-        public string Name { get; set; } = "";
         public string AverageRank { get; set; } = "";
-        public List<LeagueOfLegendsPlayer> Members { get; set; } = new List<LeagueOfLegendsPlayer>();
+        public List<LeagueOfLegendsPlayer> Players { get => Members.ConvertAll(k => k as LeagueOfLegendsPlayer); set => Members = value.ConvertAll(k => k as TeamPlayer); }
     }
 }
