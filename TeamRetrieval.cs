@@ -28,7 +28,7 @@ namespace api.pustalorc.xyz
                 foreach (var tournament in config.Tournaments)
                 {
                     var participatingTeams = GetNuelTeams(config.NuelTournamentApi, config.NuelSignupPoolsApi,
-                        tournament.TournamentName).Take(5);
+                        tournament.TournamentName);
 
                     foreach (var team in participatingTeams)
                     {
