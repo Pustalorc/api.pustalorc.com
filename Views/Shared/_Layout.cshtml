@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css"/>
+    <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/material/24/000000/chevron-hashtag.png"/>
+</head>
+<body class="bg-dark">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom border-darker box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Pustalorc's API</a>
+        </div>
+    </nav>
+</header>
+<div class="container text-light">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<footer class="border-top border-darker footer text-muted">
+    <div class="container text-light">
+        <div class="row">
+            <div class="col">
+                &copy; 2019 - <a href="https://pustalorc.xyz/">Vicente "Pustalorc" Pastor</a>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@RenderSection("Scripts", false)
+</body>
+</html>

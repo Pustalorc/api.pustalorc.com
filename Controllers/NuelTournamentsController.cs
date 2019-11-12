@@ -4,7 +4,6 @@ using System.Linq;
 using api.pustalorc.xyz.Configuration;
 using api.pustalorc.xyz.JSON_Classes;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace api.pustalorc.xyz.Controllers
 {
@@ -28,14 +27,20 @@ namespace api.pustalorc.xyz.Controllers
         public IEnumerable<TournamentTeam> GetTeamsInTournament(string tournament)
         {
             var config = ApiConfiguration.Load();
-            var tournamentDetails = config.Tournaments.FirstOrDefault(k => k.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase));
+            var tournamentDetails = config.Tournaments.FirstOrDefault(k =>
+                k.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase));
 
             switch (tournamentDetails.TournamentType)
             {
                 case ETournamentType.League:
-                    return TeamRetrieval.Teams.Where(k => k.Tournament.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase)).ToList().ConvertAll(k => k as LeagueOfLegendsTeam);
+                    return TeamRetrieval.Teams
+                        .Where(k => k.Tournament.TournamentName.Equals(tournament,
+                            StringComparison.InvariantCultureIgnoreCase)).ToList()
+                        .ConvertAll(k => k as LeagueOfLegendsTeam);
                 case ETournamentType.Rainbow6:
-                    return TeamRetrieval.Teams.Where(k => k.Tournament.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase)).ToList().ConvertAll(k => k as RainbowSixTeam);
+                    return TeamRetrieval.Teams
+                        .Where(k => k.Tournament.TournamentName.Equals(tournament,
+                            StringComparison.InvariantCultureIgnoreCase)).ToList().ConvertAll(k => k as RainbowSixTeam);
                 default:
                     return new List<TournamentTeam>();
             }
@@ -44,7 +49,9 @@ namespace api.pustalorc.xyz.Controllers
         [HttpGet("{tournament}/{team}")]
         public TournamentTeam GetTeamInTournament(string tournament, string team)
         {
-            return TeamRetrieval.Teams.Where(k => k.Tournament.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault(k => k.Id == team);
+            return TeamRetrieval.Teams
+                .Where(k => k.Tournament.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault(k => k.Id == team);
         }
     }
 }

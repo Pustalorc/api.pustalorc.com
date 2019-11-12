@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Pustalorc's API";
+}
+
+<div class="text-center">
+    <br/>
+    <div class="row text-left">
+        <div class="col-auto mx-auto">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-truedark border-darker">
+                    <h6>Nuel Tournaments</h6>
+                    <p>Base URL: <a href="/NuelTournaments">https://api.pustalorc.xyz/NuelTournaments</a></p>
+                    <br />
+                    <br />
+                    <p>Allowed methods:</p>
+                    <p>GET</p>
+                    <br />
+                    <br />
+                    <p>Further URLs with GET Access:</p>
+                    <p>
+                        <a href="/NuelTournaments/all">/all</a>
+                        <br />
+                        /<code>{tournamentName}</code>
+                        <br />
+                        /<code>{tournamentName}</code>/<code>{teamId}</code>
+                    </p>
+                    <br />
+                    <p>
+                        The variable <code>{tournamentName}</code> can be filled in by visiting the <a href="/NuelTournaments">Base URL</a>.
+                        <br />
+                        The variable <code>{teamId}</code> can be filled in by accessing first the <code>{tournamentName}</code> page with a selected tournament name from the <a href="/NuelTournaments">Base URL</a>.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

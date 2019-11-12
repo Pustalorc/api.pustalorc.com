@@ -40,13 +40,16 @@ namespace api.pustalorc.xyz
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => webBuilder.ConfigureKestrel(options =>
-                    {
-                        options.Limits.MinRequestBodyDataRate = null;
-                        options.ListenLocalhost(50052,
-                            listenOptions => listenOptions.Protocols = HttpProtocols.Http1AndHttp2);
-                    })
-                    .UseStartup<Startup>());
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureKestrel(options =>
+                        {
+                            options.Limits.MinRequestBodyDataRate = null;
+                            options.ListenLocalhost(50052,
+                                listenOptions => { listenOptions.Protocols = HttpProtocols.Http1AndHttp2; });
+                        })
+                        .UseStartup<Startup>();
+                });
         }
     }
 }
