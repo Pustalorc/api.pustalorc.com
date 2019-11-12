@@ -9,7 +9,7 @@ namespace api.pustalorc.xyz.Configuration
     {
         [JsonIgnore] public static string FileName { get; } = "Config/configuration.json";
 
-        public string LoLApiKey { get; set; } = Guid.Empty.ToString();
+        public string RiotApiKey { get; set; } = Guid.Empty.ToString();
         public string NuelTournamentApi { get; set; } = "https://tournament-cms.dev.thenuel.com/";
         public string NuelSignupPoolsApi { get; set; } = "https://teams.dev.thenuel.com/signup-pools/";
 
