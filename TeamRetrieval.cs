@@ -127,9 +127,10 @@ namespace api.pustalorc.xyz
                                                         ? "bronze_1"
                                                         : soloRankedData.Tier.ToLower() + "_" +
                                                           LeagueUtils.FromRomanToInt(soloRankedData.Rank),
-                                                    NumericRank =
-                                                        LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
-                                                        LeagueUtils.FromRomanToInt(soloRankedData.Rank),
+                                                    NumericRank = soloRankedData == null
+                                                        ? 5
+                                                        : LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
+                                                          LeagueUtils.FromRomanToInt(soloRankedData.Rank),
                                                     PlayerId = summonerDetails.Id,
                                                     ProfileIconId =
                                                         int.TryParse(
@@ -205,9 +206,10 @@ namespace api.pustalorc.xyz
                                                         ? "bronze_1"
                                                         : soloRankedData.Tier.ToLower() + "_" +
                                                           LeagueUtils.FromRomanToInt(soloRankedData.Rank),
-                                                    NumericRank =
-                                                        LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
-                                                        LeagueUtils.FromRomanToInt(soloRankedData.Rank),
+                                                    NumericRank = soloRankedData == null
+                                                        ? 5
+                                                        : LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
+                                                          LeagueUtils.FromRomanToInt(soloRankedData.Rank),
                                                     PlayerId = summonerDetails.Id,
                                                     ProfileIconId =
                                                         int.TryParse(
