@@ -32,6 +32,7 @@ namespace api.pustalorc.xyz.Controllers
 
             switch (tournamentDetails.TournamentType)
             {
+                case ETournamentType.TeamFightTactics:
                 case ETournamentType.League:
                     return TeamRetrieval.Teams
                         .Where(k => k.Tournament.TournamentName.Equals(tournament,

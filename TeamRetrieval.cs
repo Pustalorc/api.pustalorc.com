@@ -47,6 +47,7 @@ namespace api.pustalorc.xyz
                                             IsCaptain = player.UserId == team.CaptainUserId
                                         };
                                         break;
+                                    case ETournamentType.TeamFightTactics:
                                     case ETournamentType.League:
                                         playerToAdd = new LeagueOfLegendsPlayer
                                         {
@@ -85,9 +86,9 @@ namespace api.pustalorc.xyz
                                             players.Add(new RainbowSixPlayer
                                             {
                                                 Name = player.InGameName.DisplayName,
-                                                Rank = data.PCurrentrank,
-                                                PlayerId = data.PUser,
-                                                Mmr = data.PCurrentmmr,
+                                                Rank = data.P_Currentrank,
+                                                PlayerId = data.P_User,
+                                                Mmr = data.P_Currentmmr,
                                                 IsCaptain = player.UserId == team.CaptainUserId
                                             });
                                         }
@@ -102,15 +103,93 @@ namespace api.pustalorc.xyz
                                         }
 
                                         break;
-                                    case ETournamentType.League:
-                                        retry:
+                                    case ETournamentType.TeamFightTactics:
+                                    retryTft:
                                         try
                                         {
                                             var data = web.DownloadString(
-                                                $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.InGameName.DisplayName}?api_key={config.LoLApiKey}");
+                                                $"https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-name/{player.InGameName.DisplayName}?api_key={config.RiotApiKey}");
                                             var summonerDetails = JsonConvert.DeserializeObject<Summoner>(data);
                                             var data2 = web.DownloadString(
-                                                $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.Id}?api_key={config.LoLApiKey}");
+                                                $"https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/{summonerDetails.Id}?api_key={config.RiotApiKey}");
+                                            var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
+                                            Thread.Sleep(2500);
+
+                                            if ((playerStats?.Length ?? 0) > 0)
+                                            {
+                                                var soloRankedData = playerStats.FirstOrDefault(k =>
+                                                    k.QueueType.Equals("RANKED_TFT",
+                                                        StringComparison.InvariantCultureIgnoreCase));
+                                                players.Add(new LeagueOfLegendsPlayer
+                                                {
+                                                    Name = player.InGameName.DisplayName,
+                                                    Rank = soloRankedData == null
+                                                        ? "bronze_1"
+                                                        : soloRankedData.Tier.ToLower() + "_" +
+                                                          LeagueUtils.FromRomanToInt(soloRankedData.Rank),
+                                                    NumericRank =
+                                                        LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
+                                                        LeagueUtils.FromRomanToInt(soloRankedData.Rank),
+                                                    PlayerId = summonerDetails.Id,
+                                                    ProfileIconId =
+                                                        int.TryParse(
+                                                            profileIcons.Data.GetType()
+                                                                .GetProperty("_" + summonerDetails.ProfileIconId)?.Name
+                                                                ?.Substring(1) ?? "0", out var id)
+                                                            ? id
+                                                            : 0,
+                                                    IsCaptain = player.UserId == team.CaptainUserId
+                                                });
+                                            }
+                                            else
+                                            {
+                                                players.Add(new LeagueOfLegendsPlayer
+                                                {
+                                                    Name = player.InGameName.DisplayName,
+                                                    Rank = "bronze_1",
+                                                    NumericRank = 5,
+                                                    PlayerId = summonerDetails.Id,
+                                                    ProfileIconId =
+                                                        int.TryParse(
+                                                            profileIcons.Data.GetType()
+                                                                .GetProperty("_" + summonerDetails.ProfileIconId)?.Name
+                                                                ?.Substring(1) ?? "0", out var id)
+                                                            ? id
+                                                            : 0,
+                                                    IsCaptain = player.UserId == team.CaptainUserId
+                                                });
+                                            }
+                                        }
+                                        catch (WebException ex)
+                                        {
+                                            if (ex.Status != WebExceptionStatus.ProtocolError || ex.Response == null)
+                                                throw;
+
+                                            var resp = (HttpWebResponse)ex.Response;
+                                            if (resp.StatusCode == HttpStatusCode.ServiceUnavailable ||
+                                                resp.StatusCode == HttpStatusCode.InternalServerError)
+                                                goto retryTft;
+
+                                            if (resp.StatusCode != HttpStatusCode.NotFound) throw;
+
+                                            players.Add(new LeagueOfLegendsPlayer
+                                            {
+                                                Name = player.InGameName.DisplayName,
+                                                NumericRank = 5,
+                                                IsCaptain = player.UserId == team.CaptainUserId
+                                            });
+                                        }
+
+                                        break;
+                                    case ETournamentType.League:
+                                        retryLoL:
+                                        try
+                                        {
+                                            var data = web.DownloadString(
+                                                $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.InGameName.DisplayName}?api_key={config.RiotApiKey}");
+                                            var summonerDetails = JsonConvert.DeserializeObject<Summoner>(data);
+                                            var data2 = web.DownloadString(
+                                                $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.Id}?api_key={config.RiotApiKey}");
                                             var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
                                             Thread.Sleep(2500);
 
@@ -167,7 +246,7 @@ namespace api.pustalorc.xyz
                                             var resp = (HttpWebResponse) ex.Response;
                                             if (resp.StatusCode == HttpStatusCode.ServiceUnavailable ||
                                                 resp.StatusCode == HttpStatusCode.InternalServerError)
-                                                goto retry;
+                                                goto retryLoL;
 
                                             if (resp.StatusCode != HttpStatusCode.NotFound) throw;
 
@@ -205,6 +284,7 @@ namespace api.pustalorc.xyz
                                                              : (k as RainbowSixPlayer).Mmr) / players.Count
                                     };
                                     break;
+                                case ETournamentType.TeamFightTactics:
                                 case ETournamentType.League:
                                     teamToAdd = new LeagueOfLegendsTeam
                                     {
@@ -236,6 +316,7 @@ namespace api.pustalorc.xyz
                                             (k as RainbowSixPlayer).Mmr == 0 ? 2000 : (k as RainbowSixPlayer).Mmr) /
                                         players.Count;
                                     break;
+                                case ETournamentType.TeamFightTactics:
                                 case ETournamentType.League:
                                     (final as LeagueOfLegendsTeam).AverageRank =
                                         LeagueUtils.FromIntToTierAndRank(
