@@ -2,8 +2,8 @@
 {
     public class Rules
     {
-        public object data { get; set; }
-        public Content4[] content { get; set; }
-        public string nodeType { get; set; }
+        public object Data { get; set; }
+        public Content4[] Content { get; set; }
+        public string NodeType { get; set; }
     }
 }

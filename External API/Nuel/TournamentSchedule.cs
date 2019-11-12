@@ -2,8 +2,8 @@
 {
     public class TournamentSchedule
     {
-        public string name { get; set; }
-        public Criteria criteria { get; set; }
-        public Team[] teams { get; set; }
+        public string Name { get; set; }
+        public Criteria Criteria { get; set; }
+        public Team[] Teams { get; set; }
     }
 }

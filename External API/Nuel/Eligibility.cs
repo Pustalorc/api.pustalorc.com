@@ -2,7 +2,7 @@
 {
     public class Eligibility
     {
-        public bool isEligible { get; set; }
-        public string[] failedCriteria { get; set; }
+        public bool IsEligible { get; set; }
+        public string[] FailedCriteria { get; set; }
     }
 }

@@ -2,8 +2,8 @@
 {
     public class ProfileIcons
     {
-        public string type { get; set; }
-        public string version { get; set; }
-        public Data data { get; set; }
+        public string Type { get; set; }
+        public string Version { get; set; }
+        public Data Data { get; set; }
     }
 }

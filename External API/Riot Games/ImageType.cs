@@ -2,7 +2,7 @@
 {
     public class ImageType
     {
-        public int id { get; set; }
-        public Image image { get; set; }
+        public int Id { get; set; }
+        public Image Image { get; set; }
     }
 }

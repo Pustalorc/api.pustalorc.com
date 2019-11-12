@@ -2,10 +2,10 @@
 {
     public class Content5
     {
-        public UriData data { get; set; }
-        public Mark[] marks { get; set; }
-        public string value { get; set; }
-        public string nodeType { get; set; }
-        public Content6[] content { get; set; }
+        public UriData Data { get; set; }
+        public Mark[] Marks { get; set; }
+        public string Value { get; set; }
+        public string NodeType { get; set; }
+        public Content6[] Content { get; set; }
     }
 }

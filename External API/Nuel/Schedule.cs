@@ -2,10 +2,10 @@
 {
     public class Schedule
     {
-        public string title { get; set; }
-        public string date { get; set; }
-        public bool isPlayableWeek { get; set; }
-        public string tournamentId { get; set; }
-        public string checkinCloses { get; set; }
+        public string Title { get; set; }
+        public string Date { get; set; }
+        public bool IsPlayableWeek { get; set; }
+        public string TournamentId { get; set; }
+        public string CheckinCloses { get; set; }
     }
 }

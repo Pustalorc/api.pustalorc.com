@@ -2,8 +2,8 @@
 {
     public class Content4
     {
-        public UriData data { get; set; }
-        public Content5[] content { get; set; }
-        public string nodeType { get; set; }
+        public UriData Data { get; set; }
+        public Content5[] Content { get; set; }
+        public string NodeType { get; set; }
     }
 }

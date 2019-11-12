@@ -28,14 +28,14 @@ namespace api.pustalorc.xyz
                 foreach (var tournament in config.Tournaments)
                 {
                     var participatingTeams = GetNuelTeams(config.NuelTournamentApi, config.NuelSignupPoolsApi,
-                        tournament.TournamentName);
+                        tournament.TournamentName).Take(5);
 
                     foreach (var team in participatingTeams)
                     {
                         var players = new List<TeamPlayer>();
 
-                        foreach (var player in team.members.ToList())
-                            if (player.inGameName?.displayName == null)
+                        foreach (var player in team.Members.ToList())
+                            if (player.InGameName?.DisplayName == null)
                             {
                                 TeamPlayer playerToAdd = null;
                                 switch (tournament.TournamentType)
@@ -43,15 +43,15 @@ namespace api.pustalorc.xyz
                                     case ETournamentType.Rainbow6:
                                         playerToAdd = new RainbowSixPlayer
                                         {
-                                            Name = player.userId, PlayerId = "",
-                                            IsCaptain = player.userId == team.captainUserId
+                                            Name = player.UserId, PlayerId = "",
+                                            IsCaptain = player.UserId == team.CaptainUserId
                                         };
                                         break;
                                     case ETournamentType.League:
                                         playerToAdd = new LeagueOfLegendsPlayer
                                         {
-                                            Name = player.userId, NumericRank = 5,
-                                            IsCaptain = player.userId == team.captainUserId
+                                            Name = player.UserId, NumericRank = 5,
+                                            IsCaptain = player.UserId == team.CaptainUserId
                                         };
                                         break;
                                 }
@@ -70,7 +70,7 @@ namespace api.pustalorc.xyz
                                         try
                                         {
                                             downloadStr = web.DownloadString(
-                                                $"https://r6tab.com/api/search.php?platform=uplay&search={player.inGameName.displayName}");
+                                                $"https://r6tab.com/api/search.php?platform=uplay&search={player.InGameName.DisplayName}");
                                         }
                                         catch (WebException ex)
                                         {
@@ -79,25 +79,25 @@ namespace api.pustalorc.xyz
 
                                         var playerData = JsonConvert.DeserializeObject<PlayerData>(downloadStr);
 
-                                        if ((playerData?.results?.Length ?? 0) > 0)
+                                        if ((playerData?.Results?.Length ?? 0) > 0)
                                         {
-                                            var data = playerData.results[0];
+                                            var data = playerData.Results[0];
                                             players.Add(new RainbowSixPlayer
                                             {
-                                                Name = player.inGameName.displayName,
-                                                Rank = data.p_currentrank,
-                                                PlayerId = data.p_user,
-                                                Mmr = data.p_currentmmr,
-                                                IsCaptain = player.userId == team.captainUserId
+                                                Name = player.InGameName.DisplayName,
+                                                Rank = data.PCurrentrank,
+                                                PlayerId = data.PUser,
+                                                Mmr = data.PCurrentmmr,
+                                                IsCaptain = player.UserId == team.CaptainUserId
                                             });
                                         }
                                         else
                                         {
                                             players.Add(new RainbowSixPlayer
                                             {
-                                                Name = player.inGameName.displayName,
+                                                Name = player.InGameName.DisplayName,
                                                 PlayerId = "",
-                                                IsCaptain = player.userId == team.captainUserId
+                                                IsCaptain = player.UserId == team.CaptainUserId
                                             });
                                         }
 
@@ -107,55 +107,55 @@ namespace api.pustalorc.xyz
                                         try
                                         {
                                             var data = web.DownloadString(
-                                                $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.inGameName.displayName}?api_key={config.LoLApiKey}");
+                                                $"https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{player.InGameName.DisplayName}?api_key={config.LoLApiKey}");
                                             var summonerDetails = JsonConvert.DeserializeObject<Summoner>(data);
                                             var data2 = web.DownloadString(
-                                                $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.id}?api_key={config.LoLApiKey}");
+                                                $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.Id}?api_key={config.LoLApiKey}");
                                             var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
                                             Thread.Sleep(2500);
 
                                             if ((playerStats?.Length ?? 0) > 0)
                                             {
                                                 var soloRankedData = playerStats.FirstOrDefault(k =>
-                                                    k.queueType.Equals("RANKED_SOLO_5x5",
+                                                    k.QueueType.Equals("RANKED_SOLO_5x5",
                                                         StringComparison.InvariantCultureIgnoreCase));
                                                 players.Add(new LeagueOfLegendsPlayer
                                                 {
-                                                    Name = player.inGameName.displayName,
+                                                    Name = player.InGameName.DisplayName,
                                                     Rank = soloRankedData == null
                                                         ? "bronze_1"
-                                                        : soloRankedData.tier.ToLower() + "_" +
-                                                          LeagueUtils.FromRomanToInt(soloRankedData.rank),
+                                                        : soloRankedData.Tier.ToLower() + "_" +
+                                                          LeagueUtils.FromRomanToInt(soloRankedData.Rank),
                                                     NumericRank =
-                                                        LeagueUtils.FromTierToInt(soloRankedData.tier.ToLower()) +
-                                                        LeagueUtils.FromRomanToInt(soloRankedData.rank),
-                                                    PlayerId = summonerDetails.id,
+                                                        LeagueUtils.FromTierToInt(soloRankedData.Tier.ToLower()) +
+                                                        LeagueUtils.FromRomanToInt(soloRankedData.Rank),
+                                                    PlayerId = summonerDetails.Id,
                                                     ProfileIconId =
                                                         int.TryParse(
-                                                            profileIcons.data.GetType()
-                                                                .GetProperty("_" + summonerDetails.profileIconId)?.Name
+                                                            profileIcons.Data.GetType()
+                                                                .GetProperty("_" + summonerDetails.ProfileIconId)?.Name
                                                                 ?.Substring(1) ?? "0", out var id)
                                                             ? id
                                                             : 0,
-                                                    IsCaptain = player.userId == team.captainUserId
+                                                    IsCaptain = player.UserId == team.CaptainUserId
                                                 });
                                             }
                                             else
                                             {
                                                 players.Add(new LeagueOfLegendsPlayer
                                                 {
-                                                    Name = player.inGameName.displayName,
+                                                    Name = player.InGameName.DisplayName,
                                                     Rank = "bronze_1",
                                                     NumericRank = 5,
-                                                    PlayerId = summonerDetails.id,
+                                                    PlayerId = summonerDetails.Id,
                                                     ProfileIconId =
                                                         int.TryParse(
-                                                            profileIcons.data.GetType()
-                                                                .GetProperty("_" + summonerDetails.profileIconId)?.Name
+                                                            profileIcons.Data.GetType()
+                                                                .GetProperty("_" + summonerDetails.ProfileIconId)?.Name
                                                                 ?.Substring(1) ?? "0", out var id)
                                                             ? id
                                                             : 0,
-                                                    IsCaptain = player.userId == team.captainUserId
+                                                    IsCaptain = player.UserId == team.CaptainUserId
                                                 });
                                             }
                                         }
@@ -173,9 +173,9 @@ namespace api.pustalorc.xyz
 
                                             players.Add(new LeagueOfLegendsPlayer
                                             {
-                                                Name = player.inGameName.displayName,
+                                                Name = player.InGameName.DisplayName,
                                                 NumericRank = 5,
-                                                IsCaptain = player.userId == team.captainUserId
+                                                IsCaptain = player.UserId == team.CaptainUserId
                                             });
                                         }
 
@@ -183,7 +183,7 @@ namespace api.pustalorc.xyz
                                 }
                             }
 
-                        var final = Teams.FirstOrDefault(k => k.Id.Equals(team.id));
+                        var final = Teams.FirstOrDefault(k => k.Id.Equals(team.Id));
                         players = players.OrderBy(k => k.Name).ToList();
 
                         if (final == null)
@@ -196,8 +196,8 @@ namespace api.pustalorc.xyz
                                     teamToAdd = new RainbowSixTeam
                                     {
                                         Tournament = tournament,
-                                        Id = team.id,
-                                        Name = team.name,
+                                        Id = team.Id,
+                                        Name = team.Name,
                                         Members = players,
                                         AverageMmr = players.Sum(k =>
                                                          (k as RainbowSixPlayer).Mmr == 0
@@ -209,8 +209,8 @@ namespace api.pustalorc.xyz
                                     teamToAdd = new LeagueOfLegendsTeam
                                     {
                                         Tournament = tournament,
-                                        Id = team.id,
-                                        Name = team.name,
+                                        Id = team.Id,
+                                        Name = team.Name,
                                         Members = players,
                                         AverageRank = LeagueUtils.FromIntToTierAndRank(
                                             players.Sum(k =>
@@ -260,13 +260,13 @@ namespace api.pustalorc.xyz
             {
                 foreach (var tournament in JsonConvert
                     .DeserializeObject<NuelTournament>(web.DownloadString(nuelTapi + tournamentName))
-                    .schedule.Where(k => k.isPlayableWeek && DateTime.UtcNow <= DateTime.Parse(k.date).AddDays(1))
+                    .Schedule.Where(k => k.IsPlayableWeek && DateTime.UtcNow <= DateTime.Parse(k.Date).AddDays(1))
                     .ToList()
-                    .ConvertAll(k => k.tournamentId).Select(id =>
+                    .ConvertAll(k => k.TournamentId).Select(id =>
                         JsonConvert.DeserializeObject<TournamentSchedule>(
                             web.DownloadString(nuelSapi + id)))
-                    .Where(team => team.teams.Any()))
-                    teams.AddRange(tournament.teams);
+                    .Where(team => team.Teams.Any()))
+                    teams.AddRange(tournament.Teams);
             }
 
             return teams;

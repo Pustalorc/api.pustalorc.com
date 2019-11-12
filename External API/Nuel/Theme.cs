@@ -2,7 +2,7 @@
 {
     public class Theme
     {
-        public string primaryColor { get; set; }
-        public string secondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
+        public string SecondaryColor { get; set; }
     }
 }

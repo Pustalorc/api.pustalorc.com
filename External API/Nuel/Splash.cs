@@ -2,8 +2,8 @@
 {
     public class Splash
     {
-        public string backgroundColor { get; set; }
-        public string backgroundImageUrl { get; set; }
-        public string logoImageUrl { get; set; }
+        public string BackgroundColor { get; set; }
+        public string BackgroundImageUrl { get; set; }
+        public string LogoImageUrl { get; set; }
     }
 }

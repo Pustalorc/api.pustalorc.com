@@ -2,9 +2,9 @@
 {
     public class Criteria
     {
-        public int minimumMembers { get; set; }
-        public int maximumMembers { get; set; }
-        public bool requireVerification { get; set; }
-        public bool allowMixedTeams { get; set; }
+        public int MinimumMembers { get; set; }
+        public int MaximumMembers { get; set; }
+        public bool RequireVerification { get; set; }
+        public bool AllowMixedTeams { get; set; }
     }
 }

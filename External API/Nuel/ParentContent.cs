@@ -1,9 +1,9 @@
 ﻿namespace api.pustalorc.xyz.External_API.Nuel
 {
-    public class About
+    public class ParentContent
     {
         public UriData Data { get; set; }
-        public ParentContent[] Content { get; set; }
+        public Content1[] Content { get; set; }
         public string NodeType { get; set; }
     }
 }

@@ -2,15 +2,15 @@
 {
     public class NuelTournament
     {
-        public Game game { get; set; }
-        public string name { get; set; }
-        public string summary { get; set; }
-        public About about { get; set; }
-        public Prizes prizes { get; set; }
-        public Rules rules { get; set; }
-        public Theme theme { get; set; }
-        public Splash splash { get; set; }
-        public Schedule[] schedule { get; set; }
-        public Social social { get; set; }
+        public Game Game { get; set; }
+        public string Name { get; set; }
+        public string Summary { get; set; }
+        public About About { get; set; }
+        public Prizes Prizes { get; set; }
+        public Rules Rules { get; set; }
+        public Theme Theme { get; set; }
+        public Splash Splash { get; set; }
+        public Schedule[] Schedule { get; set; }
+        public Social Social { get; set; }
     }
 }

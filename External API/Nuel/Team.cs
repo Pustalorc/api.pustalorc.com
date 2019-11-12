@@ -2,11 +2,11 @@
 {
     public class Team
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public University university { get; set; }
-        public Eligibility eligibility { get; set; }
-        public string captainUserId { get; set; }
-        public Member[] members { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public University University { get; set; }
+        public Eligibility Eligibility { get; set; }
+        public string CaptainUserId { get; set; }
+        public Member[] Members { get; set; }
     }
 }

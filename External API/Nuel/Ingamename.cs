@@ -2,7 +2,7 @@
 {
     public class Ingamename
     {
-        public string displayName { get; set; }
-        public bool isVerified { get; set; }
+        public string DisplayName { get; set; }
+        public bool IsVerified { get; set; }
     }
 }

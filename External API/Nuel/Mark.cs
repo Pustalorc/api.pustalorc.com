@@ -2,6 +2,6 @@
 {
     public class Mark
     {
-        public string type { get; set; }
+        public string Type { get; set; }
     }
 }

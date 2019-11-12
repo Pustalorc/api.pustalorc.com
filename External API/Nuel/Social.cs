@@ -2,7 +2,7 @@
 {
     public class Social
     {
-        public string twitterImageUrl { get; set; }
-        public string facebookImageUrl { get; set; }
+        public string TwitterImageUrl { get; set; }
+        public string FacebookImageUrl { get; set; }
     }
 }

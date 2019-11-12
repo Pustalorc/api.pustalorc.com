@@ -2,7 +2,7 @@
 {
     public class PlayerData
     {
-        public Player[] results { get; set; }
-        public int totalresults { get; set; }
+        public Player[] Results { get; set; }
+        public int Totalresults { get; set; }
     }
 }
