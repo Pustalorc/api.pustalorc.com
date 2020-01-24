@@ -104,7 +104,7 @@ namespace api.pustalorc.xyz
 
                                         break;
                                     case ETournamentType.TeamFightTactics:
-                                    retryTft:
+                                        retryTft:
                                         try
                                         {
                                             var data = web.DownloadString(
@@ -166,7 +166,7 @@ namespace api.pustalorc.xyz
                                             if (ex.Status != WebExceptionStatus.ProtocolError || ex.Response == null)
                                                 throw;
 
-                                            var resp = (HttpWebResponse)ex.Response;
+                                            var resp = (HttpWebResponse) ex.Response;
                                             if (resp.StatusCode == HttpStatusCode.ServiceUnavailable ||
                                                 resp.StatusCode == HttpStatusCode.InternalServerError)
                                                 goto retryTft;
@@ -341,15 +341,14 @@ namespace api.pustalorc.xyz
             var teams = new List<Team>();
             using (var web = new WebClient())
             {
-                foreach (var tournament in JsonConvert
-                    .DeserializeObject<NuelTournament>(web.DownloadString(nuelTapi + tournamentName))
-                    .Schedule.Where(k => k.IsPlayableWeek && DateTime.UtcNow <= DateTime.Parse(k.Date).AddDays(1))
-                    .ToList()
-                    .ConvertAll(k => k.TournamentId).Select(id =>
-                        JsonConvert.DeserializeObject<TournamentSchedule>(
-                            web.DownloadString(nuelSapi + id)))
-                    .Where(team => team.Teams.Any()))
-                    teams.AddRange(tournament.Teams);
+                var tournamentId = JsonConvert
+                    .DeserializeObject<NuelTournament
+                    >(web.DownloadString(nuelTapi + tournamentName)).Schedule
+                    .LastOrDefault(k => DateTime.UtcNow <= DateTime.Parse(k.Date).AddDays(1))?
+                    .TournamentId;
+                if (tournamentId != null)
+                    teams.AddRange(JsonConvert
+                        .DeserializeObject<TournamentSchedule>(web.DownloadString(nuelSapi + tournamentId)).Teams);
             }
 
             return teams;
