@@ -344,7 +344,7 @@ namespace api.pustalorc.xyz
                 var tournamentId = JsonConvert
                     .DeserializeObject<NuelTournament
                     >(web.DownloadString(nuelTapi + tournamentName)).Schedule
-                    .LastOrDefault(k => DateTime.UtcNow <= DateTime.Parse(k.Date).AddDays(1))?
+                    .FirstOrDefault(k => DateTime.UtcNow <= DateTime.Parse(k.Date).AddDays(1))?
                     .TournamentId;
                 if (tournamentId != null)
                     teams.AddRange(JsonConvert
