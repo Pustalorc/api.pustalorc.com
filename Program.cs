@@ -31,11 +31,13 @@ namespace api.pustalorc.xyz
                 _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
                 _remoteDataUpdate.Start();
             }
-
-            _remoteDataUpdate.Stop();
-            _remoteDataUpdate = new Timer(end.Subtract(start).TotalMilliseconds + 1800000);
-            _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
-            _remoteDataUpdate.Start();
+            else
+            {
+                _remoteDataUpdate.Stop();
+                _remoteDataUpdate = new Timer(end.Subtract(start).TotalMilliseconds + 1800000);
+                _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
+                _remoteDataUpdate.Start();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
