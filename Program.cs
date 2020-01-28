@@ -34,6 +34,7 @@ namespace api.pustalorc.xyz
 
             _remoteDataUpdate.Stop();
             _remoteDataUpdate = new Timer(end.Subtract(start).TotalMilliseconds + 1800000);
+            _remoteDataUpdate.Elapsed += RemoteDataUpdate_Elapsed;
             _remoteDataUpdate.Start();
         }
 
