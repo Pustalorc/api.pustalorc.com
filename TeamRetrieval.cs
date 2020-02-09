@@ -113,7 +113,7 @@ namespace api.pustalorc.xyz
                                             var data2 = web.DownloadString(
                                                 $"https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner/{summonerDetails.Id}?api_key={config.RiotApiKey}");
                                             var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
-                                            Thread.Sleep(2500);
+                                            Thread.Sleep(3000);
 
                                             if ((playerStats?.Length ?? 0) > 0)
                                             {
@@ -192,7 +192,7 @@ namespace api.pustalorc.xyz
                                             var data2 = web.DownloadString(
                                                 $"https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/{summonerDetails.Id}?api_key={config.RiotApiKey}");
                                             var playerStats = JsonConvert.DeserializeObject<SummonerLeague[]>(data2);
-                                            Thread.Sleep(2500);
+                                            Thread.Sleep(3000);
 
                                             if ((playerStats?.Length ?? 0) > 0)
                                             {
