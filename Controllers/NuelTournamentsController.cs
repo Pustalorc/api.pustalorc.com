@@ -30,21 +30,25 @@ namespace api.pustalorc.xyz.Controllers
             var tournamentDetails = config.Tournaments.FirstOrDefault(k =>
                 k.TournamentName.Equals(tournament, StringComparison.InvariantCultureIgnoreCase));
 
-            switch (tournamentDetails.TournamentType)
+            return tournamentDetails.TournamentType switch
             {
-                case ETournamentType.TeamFightTactics:
-                case ETournamentType.League:
-                    return TeamRetrieval.Teams
-                        .Where(k => k.Tournament.TournamentName.Equals(tournament,
-                            StringComparison.InvariantCultureIgnoreCase)).ToList()
-                        .ConvertAll(k => k as LeagueOfLegendsTeam);
-                case ETournamentType.Rainbow6:
-                    return TeamRetrieval.Teams
-                        .Where(k => k.Tournament.TournamentName.Equals(tournament,
-                            StringComparison.InvariantCultureIgnoreCase)).ToList().ConvertAll(k => k as RainbowSixTeam);
-                default:
-                    return new List<TournamentTeam>();
-            }
+                ETournamentType.TeamFightTactics => (IEnumerable<TournamentTeam>) TeamRetrieval.Teams
+                    .Where(k => k.Tournament.TournamentName.Equals(tournament,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    .ToList()
+                    .ConvertAll(k => k as LeagueOfLegendsTeam),
+                ETournamentType.League => TeamRetrieval.Teams
+                    .Where(k => k.Tournament.TournamentName.Equals(tournament,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    .ToList()
+                    .ConvertAll(k => k as LeagueOfLegendsTeam),
+                ETournamentType.Rainbow6 => TeamRetrieval.Teams
+                    .Where(k => k.Tournament.TournamentName.Equals(tournament,
+                        StringComparison.InvariantCultureIgnoreCase))
+                    .ToList()
+                    .ConvertAll(k => k as RainbowSixTeam),
+                _ => new List<TournamentTeam>()
+            };
         }
 
         [HttpGet("{tournament}/{team}")]

@@ -19,6 +19,8 @@ namespace api.pustalorc.xyz
         public static void GetTeams()
         {
             var config = ApiConfiguration.Load();
+            var newTeams = new List<TournamentTeam>();
+            var firstLoad = !Teams.Any();
 
             using (var web = new WebClient())
             {
@@ -37,25 +39,28 @@ namespace api.pustalorc.xyz
                         foreach (var player in team.Members.ToList())
                             if (player.InGameName?.DisplayName == null)
                             {
-                                TeamPlayer playerToAdd = null;
-                                switch (tournament.TournamentType)
+                                var playerToAdd = tournament.TournamentType switch
                                 {
-                                    case ETournamentType.Rainbow6:
-                                        playerToAdd = new RainbowSixPlayer
-                                        {
-                                            Name = player.UserId, PlayerId = "",
-                                            IsCaptain = player.UserId == team.CaptainUserId
-                                        };
-                                        break;
-                                    case ETournamentType.TeamFightTactics:
-                                    case ETournamentType.League:
-                                        playerToAdd = new LeagueOfLegendsPlayer
-                                        {
-                                            Name = player.UserId, NumericRank = 5,
-                                            IsCaptain = player.UserId == team.CaptainUserId
-                                        };
-                                        break;
-                                }
+                                    ETournamentType.Rainbow6 => (TeamPlayer) new RainbowSixPlayer
+                                    {
+                                        Name = player.UserId,
+                                        PlayerId = "",
+                                        IsCaptain = player.UserId == team.CaptainUserId
+                                    },
+                                    ETournamentType.TeamFightTactics => new LeagueOfLegendsPlayer
+                                    {
+                                        Name = player.UserId,
+                                        NumericRank = 5,
+                                        IsCaptain = player.UserId == team.CaptainUserId
+                                    },
+                                    ETournamentType.League => new LeagueOfLegendsPlayer
+                                    {
+                                        Name = player.UserId,
+                                        NumericRank = 5,
+                                        IsCaptain = player.UserId == team.CaptainUserId
+                                    },
+                                    _ => null
+                                };
 
                                 if (playerToAdd == null)
                                     continue;
@@ -264,48 +269,59 @@ namespace api.pustalorc.xyz
                                 }
                             }
 
-                        var final = Teams.FirstOrDefault(k => k.Id.Equals(team.Id));
+                        var final = firstLoad
+                            ? Teams.FirstOrDefault(k => k.Id.Equals(team.Id))
+                            : newTeams.FirstOrDefault(k => k.Id.Equals(team.Id));
                         players = players.OrderBy(k => k.Name).ToList();
 
                         if (final == null)
                         {
-                            TournamentTeam teamToAdd = null;
-
-                            switch (tournament.TournamentType)
+                            var teamToAdd = tournament.TournamentType switch
                             {
-                                case ETournamentType.Rainbow6:
-                                    teamToAdd = new RainbowSixTeam
-                                    {
-                                        Tournament = tournament,
-                                        Id = team.Id,
-                                        Name = team.Name,
-                                        Members = players,
-                                        AverageMmr = players.Sum(k =>
-                                                         (k as RainbowSixPlayer).Mmr == 0
-                                                             ? 2000
-                                                             : (k as RainbowSixPlayer).Mmr) / players.Count
-                                    };
-                                    break;
-                                case ETournamentType.TeamFightTactics:
-                                case ETournamentType.League:
-                                    teamToAdd = new LeagueOfLegendsTeam
-                                    {
-                                        Tournament = tournament,
-                                        Id = team.Id,
-                                        Name = team.Name,
-                                        Members = players,
-                                        AverageRank = LeagueUtils.FromIntToTierAndRank(
-                                            players.Sum(k =>
-                                                (k as LeagueOfLegendsPlayer).NumericRank == 0
-                                                    ? 5
-                                                    : (k as LeagueOfLegendsPlayer).NumericRank) / players.Count)
-                                    };
-                                    break;
-                            }
+                                ETournamentType.Rainbow6 => (TournamentTeam) new RainbowSixTeam
+                                {
+                                    Tournament = tournament,
+                                    Id = team.Id,
+                                    Name = team.Name,
+                                    Members = players,
+                                    AverageMmr = players.Sum(k =>
+                                                     (k as RainbowSixPlayer).Mmr == 0
+                                                         ? 2000
+                                                         : (k as RainbowSixPlayer).Mmr) / players.Count
+                                },
+                                ETournamentType.TeamFightTactics => new LeagueOfLegendsTeam
+                                {
+                                    Tournament = tournament,
+                                    Id = team.Id,
+                                    Name = team.Name,
+                                    Members = players,
+                                    AverageRank = LeagueUtils.FromIntToTierAndRank(
+                                        players.Sum(k =>
+                                            (k as LeagueOfLegendsPlayer).NumericRank == 0
+                                                ? 5
+                                                : (k as LeagueOfLegendsPlayer).NumericRank) / players.Count)
+                                },
+                                ETournamentType.League => new LeagueOfLegendsTeam
+                                {
+                                    Tournament = tournament,
+                                    Id = team.Id,
+                                    Name = team.Name,
+                                    Members = players,
+                                    AverageRank = LeagueUtils.FromIntToTierAndRank(
+                                        players.Sum(k =>
+                                            (k as LeagueOfLegendsPlayer).NumericRank == 0
+                                                ? 5
+                                                : (k as LeagueOfLegendsPlayer).NumericRank) / players.Count)
+                                },
+                                _ => null
+                            };
 
                             if (teamToAdd == null) continue;
 
-                            Teams.Add(teamToAdd);
+                            if (firstLoad)
+                                Teams.Add(teamToAdd);
+                            else
+                                newTeams.Add(teamToAdd);
                         }
                         else
                         {
@@ -333,7 +349,7 @@ namespace api.pustalorc.xyz
                 }
             }
 
-            Teams = Teams.OrderBy(k => k.Name).ToList();
+            Teams = firstLoad ? Teams.OrderBy(k => k.Name).ToList() : newTeams.OrderBy(k => k.Name).ToList();
         }
 
         public static IEnumerable<Team> GetNuelTeams(string nuelTapi, string nuelSapi, string tournamentName)

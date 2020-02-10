@@ -4,109 +4,66 @@
     {
         public static string FromIntToTierAndRank(int val)
         {
-            switch (val)
+            return val switch
             {
-                case 1:
-                    return "iron_1";
-                case 2:
-                    return "iron_2";
-                case 3:
-                    return "iron_3";
-                case 4:
-                    return "iron_4";
-                case 5:
-                    return "bronze_1";
-                case 6:
-                    return "bronze_2";
-                case 7:
-                    return "bronze_3";
-                case 8:
-                    return "bronze_4";
-                case 9:
-                    return "silver_1";
-                case 10:
-                    return "silver_2";
-                case 11:
-                    return "silver_3";
-                case 12:
-                    return "silver_4";
-                case 13:
-                    return "gold_1";
-                case 14:
-                    return "gold_2";
-                case 15:
-                    return "gold_3";
-                case 16:
-                    return "gold_4";
-                case 17:
-                    return "platinum_1";
-                case 18:
-                    return "platinum_2";
-                case 19:
-                    return "platinum_3";
-                case 20:
-                    return "platinum_4";
-                case 21:
-                    return "diamond_1";
-                case 22:
-                    return "diamond_2";
-                case 23:
-                    return "diamond_3";
-                case 24:
-                    return "diamond_4";
-                case 25:
-                    return "master_1";
-                case 26:
-                    return "grandmaster_1";
-                case 27:
-                    return "challenger_1";
-                default:
-                    return "bronze_1";
-            }
+                1 => "iron_1",
+                2 => "iron_2",
+                3 => "iron_3",
+                4 => "iron_4",
+                5 => "bronze_1",
+                6 => "bronze_2",
+                7 => "bronze_3",
+                8 => "bronze_4",
+                9 => "silver_1",
+                10 => "silver_2",
+                11 => "silver_3",
+                12 => "silver_4",
+                13 => "gold_1",
+                14 => "gold_2",
+                15 => "gold_3",
+                16 => "gold_4",
+                17 => "platinum_1",
+                18 => "platinum_2",
+                19 => "platinum_3",
+                20 => "platinum_4",
+                21 => "diamond_1",
+                22 => "diamond_2",
+                23 => "diamond_3",
+                24 => "diamond_4",
+                25 => "master_1",
+                26 => "grandmaster_1",
+                27 => "challenger_1",
+                _ => "bronze_1"
+            };
         }
 
         public static int FromTierToInt(string tier)
         {
-            switch (tier.ToLower())
+            return tier.ToLower() switch
             {
-                case "iron":
-                    return 0;
-                case "bronze":
-                    return 4;
-                case "silver":
-                    return 8;
-                case "gold":
-                    return 12;
-                case "platinum":
-                    return 16;
-                case "diamond":
-                    return 20;
-                case "master":
-                    return 24;
-                case "grandmaster":
-                    return 25;
-                case "challenger":
-                    return 26;
-                default:
-                    return 5;
-            }
+                "iron" => 0,
+                "bronze" => 4,
+                "silver" => 8,
+                "gold" => 12,
+                "platinum" => 16,
+                "diamond" => 20,
+                "master" => 24,
+                "grandmaster" => 25,
+                "challenger" => 26,
+                _ => 5
+            };
         }
 
         public static int FromRomanToInt(string rank)
         {
-            switch (rank.ToLower())
+            return rank.ToLower() switch
             {
-                case "i":
-                    return 1;
-                case "ii":
-                    return 2;
-                case "iii":
-                    return 3;
-                case "iv":
-                    return 4;
-                default:
-                    return 1;
-            }
+                "i" => 1,
+                "ii" => 2,
+                "iii" => 3,
+                "iv" => 4,
+                _ => 1
+            };
         }
     }
 }
